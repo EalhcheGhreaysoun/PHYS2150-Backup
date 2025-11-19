@@ -1,0 +1,28 @@
+the following code requires the modules listed:
+numpy as p
+matplotlib.pyplot as plt
+pandas pd
+os
+h5py
+
+the code requires the following file structure:
+
+parent:
+---> dataAnalysis.py
+---> processedData
+    |---> 
+---> rawData
+    |---> data_fa25.h5
+
+
+The log files lists operations that the code performs, including data omission, reading files out of the H5 file, and more, Do note that it overwrites each time the code runs and previous logs are deleted.
+
+WARNINGS:
+* do note that the code generates about 2000 files in the rawData folder, about 280 files in the processedData folder, 4 images and a log file.
+  the large amount of files might overload some cloud based system, however, this has not been tested
+
+* currently, the C60 05 cycle set has missing data for 2025_10_03, but i'm not sure why. To be figured out
+
+everything in this file is also at the beginning of the actual code file
+
+enjoy!
