@@ -40,6 +40,8 @@ active_area_m2 = active_area_cm2 * 1e-4  # Convert cm^2 to m^2
 # array of dates for looping and file detection
 dates = np.array(['2025_09_09', '2025_09_11', '2025_09_16', '2025_09_23', '2025_09_25', '2025_09_30', '2025_10_02', '2025_10_03', '2025_10_14', '2025_10_16', '2025_10_21', '2025_10_23', '2025_10_28', '2025_10_30'])
 
+hours = np.array([0,48,168,336,384,504,552,576,840,888,1008,1056,1176,1224])
+ 
 # cell # in each set of C60 cycles
 C60_00Cycle = np.array(['129', '131', '132', '134', '135', '136', '141', '145', '146', '161', '162', '170', '184', '190', '194'])
 C60_05Cycle = np.array(['139', '143', '144', '157', '166', '172', '174', '176', '187', '189', '191', '193', '196'])
@@ -376,6 +378,28 @@ mean_eqe_C60_00_SD.to_csv('outputData/C60_10_SD.csv', index=False)
 create_plot(mean_eqe_C60_00, mean_eqe_C60_00_SD, 10, 10, 'EQE of the C60 0 cycle set', 'outputData/C60_00_cycle_day_average.png')
 create_plot(mean_eqe_C60_05, mean_eqe_C60_05_SD, 10, 10, 'EQE of the C60 5 cycle set', 'outputData/C60_05_cycle_day_average.png')
 create_plot(mean_eqe_C60_10, mean_eqe_C60_10_SD, 10, 10, 'EQE of the C60 10 cycle set', 'outputData/C60_10_cycle_day_average.png')
+
+mean_mean_eqe_00 = pd.DataFrame()
+mean_mean_eqe_05 = pd.DataFrame()
+mean_mean_eqe_10 = pd.DataFrame()
+
+mean_mean_eqe_00 = np.array(mean_eqe_C60_00.mean(axis=0))
+mean_mean_eqe_05 = np.array(mean_eqe_C60_05.mean(axis=0))
+mean_mean_eqe_10 = np.array(mean_eqe_C60_10.mean(axis=0))
+
+mean_mean_eqe_05 = np.insert(mean_mean_eqe_05, 7, 0)
+
+print(mean_mean_eqe_05)
+
+plt.figure(figsize=[10,10])
+plt.plot(hours, mean_mean_eqe_00[:-1])
+plt.plot(hours, mean_mean_eqe_05[:-1])
+plt.plot(hours, mean_mean_eqe_10[:-1])
+plt.legend(['C60 0 cycle', 'C60 5 cycle', 'C60 10 cycle'])
+plt.title('Comparison of C60 cycle sets')
+plt.xlabel('Time (hr)')
+plt.ylabel('EQE (%)')
+plt.savefig('outputData/C60_cycles.png')
 
 #signals to user that processing has ended
 print('complete.')
