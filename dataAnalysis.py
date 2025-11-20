@@ -1,38 +1,9 @@
-'''
-
-the following code requires the modules listed below, namely:
-numpy as p
-matplotlib.pyplot as plt
-pandas pd
-os
-h5py
-
-the code requires the following file structure:
-
-parent:
----> dataAnalysis.py
----> processedData
-    |---> 
----> rawData
-    |---> data_fa25.h5
-
-The log files lists operations that the code performs, including data omission, reading files out of the H5 file, and more, Do note that it overwrites each time the code runs and previous logs are deleted.
-
-WARNINGS:
-* do note that the code generates about 2000 files in the rawData folder, about 280 files in the processedData folder, 4 images and a log file.
-  the large amount of files might overload some cloud based system, however, this has not been tested
-
-* currently, the C60 05 cycle set has missing data for 2025_10_03, but i'm not sure why. To be figured out
-
-'''
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import h5py
-
+from datetime import datetime
 
 # Constants
 h = 6.62607015e-34  # Planck's constant (Joule second)
@@ -42,56 +13,56 @@ active_area_cm2 = 0.14  # Active area in cm^2
 active_area_m2 = active_area_cm2 * 1e-4  # Convert cm^2 to m^2
 
 # array of dates for looping and file detection
-dates = np.array(['2025_09_09', "2025_09_11", '2025_09_16', '2025_09_23', '2025_09_25', '2025_09_30', '2025_10_03', '2025_10_14', '2025_10_16', '2025_10_21', '2025_10_23', '2025_10_28', '2025_10_30'])
-
-# initialize arrays and dataframes
-eqe_day = np.empty(0)
-eqe_current_df = pd.DataFrame()
-eqe = pd.DataFrame()
-power_df = pd.DataFrame()
+dates = np.array(['2025_09_09', '2025_09_11', '2025_09_16', '2025_09_23', '2025_09_25', '2025_09_30', '2025_10_02', '2025_10_03', '2025_10_14', '2025_10_16', '2025_10_21', '2025_10_23', '2025_10_28', '2025_10_30'])
 
 # cell # in each set of C60 cycles
 C60_00Cycle = np.array(['129', '131', '132', '134', '135', '136', '141', '145', '146', '161', '162', '170', '184', '190', '194'])
 C60_05Cycle = np.array(['139', '143', '144', '157', '166', '172', '174', '176', '187', '189', '191', '193', '196'])
 C60_10Cycle = np.array(['126', '127', '130', '133', '137', '138', '147', '158', '159', '163', '164', '169', '179', '180', '182', '183', '186', '195'])
 all_cells = np.concatenate((C60_00Cycle, C60_05Cycle, C60_10Cycle))
+all_cells.sort()
 
-# arrays that will contain file names for each set
-cycle00_files = np.empty(0)
-cycle05_files = np.empty(0)
-cycle10_files = np.empty(0)
+#USER SETTING VARIABLES -- SET BEFORE RUNNING
+log_behavior = 'o' #'o' = overwrite, 'a' = append
+pull_h5_data = True
+process_data = True
+h5_path = 'data_fa25.h5'
+
+black_list = np.array([
+    ['2025_09_11', '192'],
+    ['2025_10_02', '195'],
+    ['2025_10_02', '184']
+])
+
 
 #print to signal to user that the processing has begun
-print('running...')
+print('running...\n')
 
+if log_behavior == 'o':
+    open('dataAnalysis.log', 'w').close()
+else:
+    print('not valid behavior specifier for log file, overwriting')
+    open('dataAnalysis.log', 'w').close()
 
-#clears log file
-open('dataAnalysis.log', 'w').close()
+with open('dataAnalysis.log', 'a') as f:
+    f.write(f'current operation started at {datetime.now()}\n')
 
-#resuable function for averaging data across C60 sets
-def average_pixel_data(files_list, df):
-    temp_df = pd.DataFrame()
-    df["Wavelength (nm)"] = pd.read_csv('processedData/eqe_results_2025_09_11_cell170.csv')['Wavelength (nm)']
-    for file in files_list:
-        i = 2
-        temp_df[f'EQE pixel 1'] = pd.read_csv(f'processedData/{file}')['EQE pixel 1']
-        while i < 9:  #adds all pixel values of the current file to the temp df
-            temp_df[f"EQE pixel {i}"] = pd.read_csv(f'processedData/{file}')[f"EQE pixel {i}"]
-            i += 1
+'''
+needed functions:
+retrive and write data
+process data
+    needs to slice data as well
 
-        temp_df["average EQE"] = temp_df.sum(axis=1)/8
-        df[f'{file[12:16]} {file[17:19]} {file[20:22]} cell {file[27:30]}'] = temp_df['average EQE']
-        temp_df = temp_df.iloc[0:0]
-
+'''
 #resuable function for slicing data
 def slice_data(df, lower_range, upper_range):
-    temp = df[df["Wavelength (nm)"] > lower_range]
-    temp = temp[temp["Wavelength (nm)"] < upper_range]
+    temp = df[df['Wavelength (nm)'] > lower_range]
+    temp = temp[temp['Wavelength (nm)'] < upper_range]
     return temp
 
 #function for getting power data
 def get_power_data(hdf5_path, cell_number, date):
-    """
+    '''
     Retrieve Power data (wavelength vs power) for a given cell and date.
 
     Power is measured once per cell (not per pixel).
@@ -115,7 +86,7 @@ def get_power_data(hdf5_path, cell_number, date):
     Example:
     --------
     power_df = get_power_data(hdf5_path, 129, '2025_09_23')
-    """
+    '''
     # FA25: Ensure 3-digit zero-padding
     cell_number = str(cell_number).zfill(3)
 
@@ -135,12 +106,12 @@ def get_power_data(hdf5_path, cell_number, date):
             return df
         else:
             with open('dataAnalysis.log', 'a') as f:
-                    f.write(f"Power data for Cell{cell_number} on {date} not found.\n")
+                    f.write(f'Power data for Cell{cell_number} on {date} not found.\n')
             return None
 
 #function for getting current data
 def get_current_data(hdf5_path, cell_number, pixel_number, date):
-    """
+    '''
     Retrieve Current data (wavelength vs current) for a specific cell, pixel, and date.
 
     Current is measured separately for each pixel.
@@ -166,7 +137,7 @@ def get_current_data(hdf5_path, cell_number, pixel_number, date):
     Example:
     --------
     current_df = get_current_data(hdf5_path, 129, 4, '2025_09_23')
-    """
+    '''
     # FA25: Ensure 3-digit zero-padding
     cell_number = str(cell_number).zfill(3)
     pixel_number = str(pixel_number)
@@ -183,7 +154,7 @@ def get_current_data(hdf5_path, cell_number, pixel_number, date):
             return df
         else:
             with open('dataAnalysis.log', 'a') as f:
-                f.write(f"Current data for Cell{cell_number}, Pixel{pixel_number} on {date} not found.\n")
+                f.write(f'Current data for Cell{cell_number}, Pixel{pixel_number} on {date} not found.\n')
             return None
 
 #function for writing data from h5 file to csvs
@@ -215,225 +186,171 @@ def retrieve_and_write_data(hdf5_path, cells, dates):
                     current_data.to_csv(var_name, index=False)
                 pixel += 1
 
-#checks if data from the h5 file has be processed, if not, processes data
-if len(os.listdir('rawData')) == 1:
-    retrieve_and_write_data('rawData/data_fa25.h5', C60_00Cycle, dates)
-    retrieve_and_write_data('rawData/data_fa25.h5', C60_05Cycle, dates)
-    retrieve_and_write_data('rawData/data_fa25.h5', C60_10Cycle, dates)
-else:
-    with open('dataAnalysis.log', 'a') as f:
-        f.write('skipping get data from h5 file as files already exist. \n')
+def process_data():
+    TEMP_current_files = np.empty(0)
+    TEMP_power_file = ''
 
-#code for processing data
-#loops through all dates
-if len(os.listdir('processedData')) == 0:
-    for date in dates:
-        #loops through all cells
-        for cell in all_cells:
-            #check if the given date and cell already have processed data, cuts down on computation time and redundant operations
-            processed_data_names = os.listdir('processedData')
-            if not np.isin(f'eqe_results_{date}_cell{cell}.csv', processed_data_names):
-                #loops through the files in 'rawData'
-                for fileName in os.listdir('rawData'):
-                    #if the file  is the power data file for the given date and cell, add it to the temp array of files
-                    if fileName == f'{date}_power_cell{cell}.csv':
-                        eqe_day = np.append(eqe_day, fileName)
-                    #if the file is one of the current data files for the given date and cell, add it to the temp array of files
-                    if fileName[0:26] == f'{date}_current_cell{cell}':
-                        eqe_day = np.append(eqe_day, fileName)
-                #checks if the number of files that have been found for a given date and cell are the required number
-                if eqe_day.size > 8:
-                    eqe_day = np.sort(eqe_day)
-                    # reads power data from file
-                    power_df = pd.read_csv(f'rawData/{eqe_day[-1]}')
+    current_df = pd.DataFrame()
+    power_df = pd.DataFrame()
+    eqe = pd.DataFrame()
 
-                    # reads wavelength data from second file in array, it does not matter which file we read from, but the first entry in the array contains information about the array type
-                    eqe_current_df["Wavelength (nm)"] = pd.read_csv(f"rawData/{date}_current_cell{eqe_day[1][23:26]}_pixel{1}.csv")["Wavelength (nm)"]
+    for i, date in enumerate(dates):
+        for j, cell in enumerate(all_cells):
+            for file_name in os.listdir('rawData'):
+                #if the file in question has the same date and cell# as the desired, adds to list of file names
+                if file_name == f'{date}_power_cell{cell}.csv':
+                    TEMP_power_file = file_name
+                if file_name[0:26] == f'{date}_current_cell{cell}':
+                    TEMP_current_files = np.append(TEMP_current_files, file_name)
+            if TEMP_current_files.size == 8 and TEMP_power_file != '':
+                # reads power data from file
+                power_df = pd.read_csv(f'rawData/{TEMP_power_file}')
 
-                    # loops over all files and adds current data to the dataframe
-                    i = 0
-                    while i < 8:
-                        eqe_current_df[f"Pixel {i+1} Current (A)"] = pd.read_csv(f"rawData/{date}_current_cell{eqe_day[1][23:26]}_pixel{i+1}.csv")["Current (A)"]
-                        i += 1
-                    
-                    # inits eqe dataframe and adds wavelength as the first column
-                    eqe = pd.DataFrame()
-                    eqe["Wavelength (nm)"] = eqe_current_df["Wavelength (nm)"]
-                    # loops over all the columns in the current df and does math to convert it to eqe
-                    i = 0
-                    while i < 8:
-                        eqe[f"EQE pixel {i+1}"] = ((eqe_current_df[f"Pixel {i+1} Current (A)"] / power_df['Power (W)']) * (h * c / (e * eqe_current_df["Wavelength (nm)"]*1e-9)))
-                        i += 1
-                    # writes final EQE data for each date for each cell to a file in folder processed data
-                    eqe.to_csv(f'processedData/eqe_results_{date}_cell{eqe_day[1][23:26]}.csv', index=False)
-                    with open('dataAnalysis.log', 'a') as f:
-                        f.write(f'processed data from {eqe_day[0]} \n')
-                else:
-                    with open('dataAnalysis.log', 'a') as f:
-                        f.write(f'insufficient number of files for {date} and cell {cell}. Found files are as follows: {eqe_day}\n')
-                # clears the EQE file name array for next date
-                eqe_day = np.empty(0)
-else:
-    with open('dataAnalysis.log', 'a') as f:
-        f.write('skipping data processing as processed data already exists. \n')
+                # reads wavelength data from second file in array, it does not matter which file we read from, but the first entry in the array contains information about the array type
+                current_df['Wavelength (nm)'] = pd.read_csv(f'rawData/{date}_current_cell{TEMP_current_files[1][23:26]}_pixel{1}.csv')['Wavelength (nm)']
 
-# loops over files in processed data and sorts file names into arrays according to C60 cycles
-# if cell does not exist in any of the C60 cycle sets, ommits data and prints that data is ommited from that cell
-for fileName in os.listdir('processedData'):
-    if (fileName[27:30] in C60_00Cycle):
-        cycle00_files = np.append(cycle00_files, fileName)
+                # loops over all files and adds current data to the dataframe
+                i = 0
+                while i < 8:
+                    current_df[f'Pixel {i+1} Current (A)'] = pd.read_csv(f'rawData/{date}_current_cell{TEMP_current_files[1][23:26]}_pixel{i+1}.csv')['Current (A)']
+                    i += 1
+
+                #inits eqe df's first column
+                eqe['Wavelength (nm)'] = current_df['Wavelength (nm)']
+
+                # loops over all the columns in the current df and does math to convert it to eqe
+                i = 0
+                while i < 8:
+                    eqe[f'EQE pixel {i+1}'] = ((current_df[f'Pixel {i+1} Current (A)'] / power_df['Power (W)']) * (h * c / (e * current_df['Wavelength (nm)']*1e-9)))
+                    i += 1
+                eqe = slice_data(eqe, 700, 750)
+                # writes final EQE data for each date for each cell to a file in folder processed data
+                eqe.to_csv(f'processedData/eqe_results_{date}_cell{TEMP_current_files[1][23:26]}.csv', index=False)
+            else:
+                with open('dataAnalysis.log', 'a') as f:
+                    f.write(f'insufficient number of files for {date} and cell {cell}. Found files are as follows: {TEMP_power_file} \n {TEMP_current_files}\n')
+            # clears temp variables for reuse
+            TEMP_current_files = np.empty(0)
+            TEMP_power_file = ''
+
+def create_plot(data, sdev, size_x, size_y, title, save_file_name, plot_errors=True):
+    plt.figure(figsize=(size_x, size_y))
+    for i in range(len(data.columns) - 1):
+        plt.plot(data['Wavelength (nm)'], data[data.columns[i]], color=((i/len(data.columns)), 0, (len(data.columns) - i)/len(data.columns)))
+        if plot_errors:
+            plt.errorbar(data['Wavelength (nm)'], data[data.columns[i]], yerr=sdev[data.columns[i]],color=((i/len(data.columns)), 0, (len(data.columns) - i)/len(data.columns)), fmt='o', capsize=5, capthick=2)
+    labels = np.empty(0)
+    for i in range(len(data.columns)-1):
+        labels = np.append(labels, data.columns[i][0:4] + ' ' + data.columns[i][5:7] + ' ' + data.columns[i][8:10])
+    plt.legend(labels, loc='upper right')
+    plt.title(title)
+    plt.xlabel('Wavelength (nm)')
+    plt.ylabel('EQE')
+    plt.savefig(save_file_name)
+
+
+print('pulling data from h5 file... \n')
+
+#pulls data from h5 file and writes to csv's in folder rawData
+if pull_h5_data: #check if user wants to pull data
+    if not os.path.isdir('rawData'): #checks to see if the desired directory exists
+        os.mkdir('rawData') #if not, make directory
+        #add to log file that directory was created
         with open('dataAnalysis.log', 'a') as f:
-            f.write(f"added {fileName} to cycles 00\n")
-    elif (fileName[27:30] in C60_05Cycle):            
-        cycle05_files = np.append(cycle05_files, fileName)
-        with open('dataAnalysis.log', 'a') as f:
-           f.write(f"added {fileName} to cycles 05\n")
-    elif (fileName[27:30] in C60_10Cycle):
-        cycle10_files = np.append(cycle10_files, fileName)
-        with open('dataAnalysis.log', 'a') as f:
-            f.write(f"added {fileName} to cycles 10\n")
+            f.write(f'directory rawData did not exist. created directory rawData\n')
+    if len(os.listdir('rawData')) == 0: #checks if data has been pulled before, if not:
+        #pulls all data for cells and dates given in all_cells and dates
+        retrieve_and_write_data(h5_path, all_cells, dates)
     else:
         with open('dataAnalysis.log', 'a') as f:
-            f.write(f'invalid cell: {fileName}. Ommiting data')
-        
-#inits df for C60 data
-C60_00_df = pd.DataFrame()
-C60_05_df = pd.DataFrame()
-C60_10_df = pd.DataFrame()
+            f.write('skipping get data from h5 file as files already exist. \n')
+else:
+    with open('dataAnalysis.log', 'a') as f:
+        f.write('skipping get data from h5 file as user specified \n')
 
-#set data frame for 00 cycles and slices off unneeded wavelengths
-average_pixel_data(cycle00_files, C60_00_df)
-C60_00_df = slice_data(C60_00_df, 700, 750)
-#set data frame for 05 cycles and slices off unneeded wavelengths
-average_pixel_data(cycle05_files, C60_05_df)
-C60_05_df = slice_data(C60_05_df, 700, 750)
-#set data frame for 10 cycles and slices off unneeded wavelengths
-average_pixel_data(cycle10_files, C60_10_df)
-C60_10_df = slice_data(C60_10_df, 700, 750)
+print('done pulling data from h5 file. \n')
+print('processing pulled data... \n')
 
-#creates a list of dataframes
-C60_cycles = [C60_00_df, C60_05_df, C60_10_df]
+#processes data from the h5 file
+if process_data:
+    if not os.path.isdir('processedData'): #checks if desired directory exists
+        os.mkdir('processedData') #if not, make directory
+        #add to log file that directory was created
+        with open('dataAnalysis.log', 'a') as f:
+            f.write(f'directory processedData did not exist. created directory processedData\n')
+    if len(os.listdir('processedData')) == 0:
+        process_data()
+    else:
+        with open('dataAnalysis.log', 'a') as f:
+            f.write('skipping data processing as processed data already exists. \n')
+else:
+    with open('dataAnalysis.log', 'a') as f:
+        f.write('skipping data processing as user specified \n')
 
-#initializes dataframes
-df_day = pd.DataFrame()
+print('done processing data. \n')
+
+#inits data frames for averaging mean values
 mean_eqe_C60_00 = pd.DataFrame()
+mean_eqe_C60_00_SD = pd.DataFrame()
+mean_eqe_C60_00['Wavelength (nm)'] = pd.read_csv(f'processedData/{os.listdir('processedData')[0]}')['Wavelength (nm)']
+
 mean_eqe_C60_05 = pd.DataFrame()
+mean_eqe_C60_05_SD = pd.DataFrame()
+mean_eqe_C60_05['Wavelength (nm)'] = pd.read_csv(f'processedData/{os.listdir('processedData')[0]}')['Wavelength (nm)']
+
 mean_eqe_C60_10 = pd.DataFrame()
-#creates a list of mean eqe dataframes
-mean_eqe = [mean_eqe_C60_00, mean_eqe_C60_05, mean_eqe_C60_10]
-sdev = np.empty(0)
-sdev_df = pd.DataFrame()
+mean_eqe_C60_10_SD = pd.DataFrame()
+mean_eqe_C60_10['Wavelength (nm)'] = pd.read_csv(f'processedData/{os.listdir('processedData')[0]}')['Wavelength (nm)']
 
-#loops over all dates
-for date in dates:
-    for i, cycle_data in enumerate(C60_cycles):
-        mean_eqe[i]["Wavelength (nm)"] = C60_00_df['Wavelength (nm)']
-        #loops over columns in the 0 cycle dataframe
-        for column in cycle_data.columns:
-            # if the first characters of the file name match the date...
-            if column[0:10] == (date[0:4]+' '+date[5:7] + ' ' + date[8:10]):
-                # add it to the df_day dataframe
-                df_day[column] = cycle_data[column]
-                sdev = np.append(sdev, cycle_data[column].std())
-                df_day = df_day.copy()
-        #once all data for a certain day is added, take the mean and assign it to the mean eqe data frame with the correct date
-        mean_eqe[i][f"{date} average"] = df_day.mean(axis=1)
-        #clears the temp data frame for reuse
-        df_day = df_day.iloc[:0]
-        sdev_df = sdev
-#drops all empty columns so that there are no redundant empty columns
-for i, df_name in enumerate(mean_eqe):
-    mean_eqe[i] = mean_eqe[i].dropna(axis=0, how='all')
+#checks if the output directory exists, if not, creates directory and adds to log file
+if not os.path.isdir('outputData'):
+    os.mkdir('outputData')
+    with open('dataAnalysis.log', 'a') as f:
+        f.write('Directory outputData does not exist, created directory outputData \n')
 
-#plots mean_eqe_C60_00 data with error bars
-columns = mean_eqe_C60_00.columns
-plt.figure(figsize=(10, 10))
-for i, name in enumerate(columns):
-    if i != 0:
-        plt.plot(mean_eqe_C60_00['Wavelength (nm)'], mean_eqe_C60_00[columns[i]], color=((i/len(columns)), 0, (len(columns) - i)/len(columns)))
-        plt.errorbar(mean_eqe_C60_00['Wavelength (nm)'], mean_eqe_C60_00[columns[i]], yerr=sdev[i],color=((i/len(columns)), 0, (len(columns) - i)/len(columns)), fmt='o', capsize=5, capthick=2)
-plt.legend(np.delete(columns, 0), loc='upper right')
-plt.title('EQE of the C60 0 cycle set')
-plt.xlabel('Wavelength (nm)')
-plt.ylabel('EQE')
-plt.savefig('C60_00_cycle_day_average.png')
+#calculates mean values for each date of each set of C60
+for file in os.listdir('processedData'):
+    if file[27:30] in C60_00Cycle:
+        file_df = pd.read_csv(f'processedData/{file}')
+        columns = file_df.columns
+        columns = columns[1:]
+        mean_eqe_C60_00[file[12:22]] = file_df[columns].mean(axis=1)
+        mean_eqe_C60_00_SD[file[12:22]] = file_df[columns].std(axis=1)
+    if file[27:30] in C60_05Cycle:
+        file_df = pd.read_csv(f'processedData/{file}')
+        columns = file_df.columns
+        columns = columns[1:]
+        mean_eqe_C60_05[file[12:22]] = file_df[columns].mean(axis=1)
+        mean_eqe_C60_05_SD[file[12:22]] = file_df[columns].std(axis=1)
+    if file[27:30] in C60_10Cycle:
+        file_df = pd.read_csv(f'processedData/{file}')
+        columns = file_df.columns
+        columns = columns[1:]
+        mean_eqe_C60_10[file[12:22]] = file_df[columns].mean(axis=1)
+        mean_eqe_C60_10_SD[file[12:22]] = file_df[columns].std(axis=1)
 
-#plots mean_eqe_C60_00 data with error bars, plotted with different colors
-plt.figure(figsize=(10, 10))
-for i, name in enumerate(columns):
-    if i != 0:
-        plt.plot(mean_eqe_C60_00['Wavelength (nm)'], mean_eqe_C60_00[columns[i]])
-        plt.errorbar(mean_eqe_C60_00['Wavelength (nm)'], mean_eqe_C60_00[columns[i]], yerr=sdev[i], fmt='o', capsize=5, capthick=2)
-plt.legend(np.delete(columns, 0), loc='upper right')
-plt.title('EQE of the C60 0 cycle set with different colors')
-plt.xlabel('Wavelength (nm)')
-plt.ylabel('EQE')
-plt.savefig('C60_00_cycle_day_average_diff_color.png')
+#sorts columns by date, from 2025_09_09 to 2025_10_30
+mean_eqe_C60_00 = mean_eqe_C60_00.reindex(sorted(mean_eqe_C60_00.columns), axis=1)
+mean_eqe_C60_05 = mean_eqe_C60_05.reindex(sorted(mean_eqe_C60_05.columns), axis=1)
+mean_eqe_C60_10 = mean_eqe_C60_10.reindex(sorted(mean_eqe_C60_10.columns), axis=1)
 
-#plots mean_eqe_C60_05 data with error bars
-columns = mean_eqe_C60_05.columns
-plt.figure(figsize=(10, 10))
-for i, name in enumerate(columns):
-    if i != 0:
-        plt.plot(mean_eqe_C60_05['Wavelength (nm)'], mean_eqe_C60_05[columns[i]], color=((i/len(columns)), 0, (len(columns) - i)/len(columns)))
-        plt.errorbar(mean_eqe_C60_00['Wavelength (nm)'], mean_eqe_C60_00[columns[i]], yerr=sdev[i],color=((i/len(columns)), 0, (len(columns) - i)/len(columns)), fmt='o', capsize=5, capthick=2)
-plt.legend(np.delete(columns, 0), loc='upper right')
-plt.title('EQE of the C60 5 cycle set')
-plt.xlabel('Wavelength (nm)')
-plt.ylabel('EQE')
-plt.savefig('C60_05_cycle_day_average.png')
+mean_eqe_C60_00_SD = mean_eqe_C60_00_SD.reindex(sorted(mean_eqe_C60_00_SD.columns), axis=1)
+mean_eqe_C60_05_SD = mean_eqe_C60_05_SD.reindex(sorted(mean_eqe_C60_05_SD.columns), axis=1)
+mean_eqe_C60_10_SD = mean_eqe_C60_10_SD.reindex(sorted(mean_eqe_C60_10_SD.columns), axis=1)
 
-#plots mean_eqe_C60_05 data with error bars, plotted with different colors
-plt.figure(figsize=(10, 10))
-for i, name in enumerate(columns):
-    if i != 0:
-        plt.plot(mean_eqe_C60_05['Wavelength (nm)'], mean_eqe_C60_05[columns[i]])
-        plt.errorbar(mean_eqe_C60_00['Wavelength (nm)'], mean_eqe_C60_00[columns[i]], yerr=sdev[i], fmt='o', capsize=5, capthick=2)
-plt.legend(np.delete(columns, 0), loc='upper right')
-plt.title('EQE of the C60 5 cycle set with different colors')
-plt.xlabel('Wavelength (nm)')
-plt.ylabel('EQE')
-plt.savefig('C60_05_cycle_day_average_diff_color.png')
+#writes to files
+mean_eqe_C60_00.to_csv('outputData/C60_00_mean.csv', index=False)
+mean_eqe_C60_05.to_csv('outputData/C60_05_mean.csv', index=False)
+mean_eqe_C60_10.to_csv('outputData/C60_10_mean.csv', index=False)
 
-#plots mean_eqe_C60_10 data with error bars
-columns = mean_eqe_C60_10.columns
-plt.figure(figsize=(10, 10))
-for i, name in enumerate(columns):
-    if i != 0:
-        plt.plot(mean_eqe_C60_10['Wavelength (nm)'], mean_eqe_C60_10[columns[i]], color=((i/len(columns)), 0, (len(columns) - i)/len(columns)))
-        plt.errorbar(mean_eqe_C60_00['Wavelength (nm)'], mean_eqe_C60_00[columns[i]], yerr=sdev[i],color=((i/len(columns)), 0, (len(columns) - i)/len(columns)), fmt='o', capsize=5, capthick=2)
-plt.legend(np.delete(columns, 0), loc='upper right')
-plt.title('EQE of the C60 10 cycle set')
-plt.xlabel('Wavelength (nm)')
-plt.ylabel('EQE')
-plt.savefig('C60_10_cycle_day_average.png')
+mean_eqe_C60_00_SD.to_csv('outputData/C60_00_SD.csv', index=False)
+mean_eqe_C60_00_SD.to_csv('outputData/C60_05_SD.csv', index=False)
+mean_eqe_C60_00_SD.to_csv('outputData/C60_10_SD.csv', index=False)
 
-#plots mean_eqe_C60_10 data with error bars, plotted with different colors
-plt.figure(figsize=(10, 10))
-for i, name in enumerate(columns):
-    if i != 0:
-        plt.plot(mean_eqe_C60_10['Wavelength (nm)'], mean_eqe_C60_10[columns[i]])
-        plt.errorbar(mean_eqe_C60_00['Wavelength (nm)'], mean_eqe_C60_00[columns[i]], yerr=sdev[i], fmt='o', capsize=5, capthick=2)
-plt.legend(np.delete(columns, 0), loc='upper right')
-plt.title('EQE of the C60 10 cycle set with different colors')
-plt.xlabel('Wavelength (nm)')
-plt.ylabel('EQE')
-plt.savefig('C60_10_cycle_day_average_diff_color.png')
-
-
-mean_mean_eqe_C60_00 = mean_eqe_C60_00.mean()
-mean_mean_eqe_C60_05 = mean_eqe_C60_05.mean()
-mean_mean_eqe_C60_10 = mean_eqe_C60_10.mean()
-
-t = np.linspace(0, 10, len(mean_mean_eqe_C60_00)-1)
-
-plt.figure(figsize=(12, 9))
-plt.plot(t, np.delete(mean_mean_eqe_C60_00, 0))
-plt.plot(t, np.delete(mean_mean_eqe_C60_05, 0))
-plt.plot(t, np.delete(mean_mean_eqe_C60_10, 0))
-
-plt.legend(["00 cycle", "05 cycle", "10 cycle"])
-plt.savefig('C60_00_cycle_total_average.png')
+#plots data
+create_plot(mean_eqe_C60_00, mean_eqe_C60_00_SD, 10, 10, 'EQE of the C60 0 cycle set', 'outputData/C60_00_cycle_day_average.png')
+create_plot(mean_eqe_C60_05, mean_eqe_C60_05_SD, 10, 10, 'EQE of the C60 5 cycle set', 'outputData/C60_05_cycle_day_average.png')
+create_plot(mean_eqe_C60_10, mean_eqe_C60_10_SD, 10, 10, 'EQE of the C60 10 cycle set', 'outputData/C60_10_cycle_day_average.png')
 
 #signals to user that processing has ended
 print('complete.')
