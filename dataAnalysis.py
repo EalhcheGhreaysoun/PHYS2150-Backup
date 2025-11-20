@@ -55,6 +55,9 @@ pull_h5_data = True
 process_data = True
 h5_path = 'data_fa25.h5'
 
+wavelength_upper_bound = 751
+wavelength_lower_bound = 700
+
 black_list = np.array([
     ['2025_09_11', '192'],
     ['2025_10_02', '195'],
@@ -250,7 +253,7 @@ def process_data():
                 while i < 8:
                     eqe[f'EQE pixel {i+1}'] = ((current_df[f'Pixel {i+1} Current (A)'] / power_df['Power (W)']) * (h * c / (e * current_df['Wavelength (nm)']*1e-9)))
                     i += 1
-                eqe = slice_data(eqe, 700, 750)
+                eqe = slice_data(eqe, wavelength_lower_bound, wavelength_upper_bound)
                 # writes final EQE data for each date for each cell to a file in folder processed data
                 eqe.to_csv(f'processedData/eqe_results_{date}_cell{TEMP_current_files[1][23:26]}.csv', index=False)
             else:
@@ -389,12 +392,11 @@ mean_mean_eqe_10 = np.array(mean_eqe_C60_10.mean(axis=0))
 
 mean_mean_eqe_05 = np.insert(mean_mean_eqe_05, 7, 0)
 
-print(mean_mean_eqe_05)
 
 plt.figure(figsize=[10,10])
-plt.plot(hours, mean_mean_eqe_00[:-1])
-plt.plot(hours, mean_mean_eqe_05[:-1])
-plt.plot(hours, mean_mean_eqe_10[:-1])
+plt.scatter(hours, mean_mean_eqe_00[:-1])
+plt.scatter(hours, mean_mean_eqe_05[:-1])
+plt.scatter(hours, mean_mean_eqe_10[:-1])
 plt.legend(['C60 0 cycle', 'C60 5 cycle', 'C60 10 cycle'])
 plt.title('Comparison of C60 cycle sets')
 plt.xlabel('Time (hr)')
