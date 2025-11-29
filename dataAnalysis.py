@@ -37,10 +37,12 @@ e = 1.602176634e-19  # Elementary charge (Coulombs)
 active_area_cm2 = 0.14  # Active area in cm^2
 active_area_m2 = active_area_cm2 * 1e-4  # Convert cm^2 to m^2
 
+### need to make sure some dates start on 09_11
 # array of dates for looping and file detection
 dates = np.array(['2025_09_09', '2025_09_11', '2025_09_16', '2025_09_23', '2025_09_25', '2025_09_30', '2025_10_02', '2025_10_03', '2025_10_14', '2025_10_16', '2025_10_21', '2025_10_23', '2025_10_28', '2025_10_30'])
 
 hours = np.array([0,48,168,336,384,504,552,576,840,888,1008,1056,1176,1224])
+other_hours = np.array([0, 0, 168, 336, 336, 504, 504, 528, 840, 840, 1008, 1008, 1176, 1176])
  
 # cell # in each set of C60 cycles
 C60_00Cycle = np.array(['129', '131', '132', '134', '135', '136', '141', '145', '146', '161', '162', '170', '184', '190', '194'])
@@ -77,13 +79,6 @@ else:
 with open('dataAnalysis.log', 'a') as f:
     f.write(f'current operation started at {datetime.now()}\n')
 
-'''
-needed functions:
-retrive and write data
-process data
-    needs to slice data as well
-
-'''
 #resuable function for slicing data
 def slice_data(df, lower_range, upper_range):
     temp = df[df['Wavelength (nm)'] > lower_range]
@@ -394,9 +389,9 @@ mean_mean_eqe_05 = np.insert(mean_mean_eqe_05, 7, 0)
 
 
 plt.figure(figsize=[10,10])
-plt.scatter(hours, mean_mean_eqe_00[:-1])
-plt.scatter(hours, mean_mean_eqe_05[:-1])
-plt.scatter(hours, mean_mean_eqe_10[:-1])
+plt.plot(other_hours, mean_mean_eqe_00[:-1])
+plt.plot(other_hours, mean_mean_eqe_05[:-1])
+plt.plot(other_hours, mean_mean_eqe_10[:-1])
 plt.legend(['C60 0 cycle', 'C60 5 cycle', 'C60 10 cycle'])
 plt.title('Comparison of C60 cycle sets')
 plt.xlabel('Time (hr)')
