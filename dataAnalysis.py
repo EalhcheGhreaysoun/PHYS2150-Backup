@@ -57,9 +57,11 @@ pull_h5_data = True
 process_data = True
 h5_path = 'data_fa25.h5'
 
+# upper and lower bounds for the wavelength region that is being observed
 wavelength_upper_bound = 751
 wavelength_lower_bound = 700
 
+# cells and dates with bad data
 black_list = np.array([
     ['2025_09_11', '192'],
     ['2025_10_02', '195'],
@@ -70,6 +72,7 @@ black_list = np.array([
 #print to signal to user that the processing has begun
 print('running...\n')
 
+#sets log file behavior set by variables above
 if log_behavior == 'o':
     open('dataAnalysis.log', 'w').close()
 else:
@@ -191,6 +194,7 @@ def retrieve_and_write_data(hdf5_path, cells, dates):
     YYYY_MM_DD_power_cell###.csv
     YYYY_MM_DD_current_cell###pixel#.csv
     '''
+    #loops through all dates and cells
     for date in dates:
         for cell in cells:
             # Retrieve Power data (one per cell, not per pixel)
@@ -211,14 +215,18 @@ def retrieve_and_write_data(hdf5_path, cells, dates):
                     current_data.to_csv(var_name, index=False)
                 pixel += 1
 
+#function for processing data pulled from the h5 file
 def process_data():
+    #variable init (arrays)
     TEMP_current_files = np.empty(0)
     TEMP_power_file = ''
 
+    #variable init (dataframes)
     current_df = pd.DataFrame()
     power_df = pd.DataFrame()
     eqe = pd.DataFrame()
 
+    #loops through all dates and cells
     for i, date in enumerate(dates):
         for j, cell in enumerate(all_cells):
             for file_name in os.listdir('rawData'):
@@ -252,21 +260,30 @@ def process_data():
                 # writes final EQE data for each date for each cell to a file in folder processed data
                 eqe.to_csv(f'processedData/eqe_results_{date}_cell{TEMP_current_files[1][23:26]}.csv', index=False)
             else:
+                #writes to log file that data processing was skipped
                 with open('dataAnalysis.log', 'a') as f:
                     f.write(f'insufficient number of files for {date} and cell {cell}. Found files are as follows: {TEMP_power_file} \n {TEMP_current_files}\n')
             # clears temp variables for reuse
             TEMP_current_files = np.empty(0)
             TEMP_power_file = ''
 
+#function for plotting data
 def create_plot(data, sdev, size_x, size_y, title, save_file_name, plot_errors=True):
+    #sets fig size
     plt.figure(figsize=(size_x, size_y))
+    #loops through data in the given dataframe
     for i in range(len(data.columns) - 1):
         plt.plot(data['Wavelength (nm)'], data[data.columns[i]], color=((i/len(data.columns)), 0, (len(data.columns) - i)/len(data.columns)))
+        #adds error bars in wanted
         if plot_errors:
             plt.errorbar(data['Wavelength (nm)'], data[data.columns[i]], yerr=sdev[data.columns[i]],color=((i/len(data.columns)), 0, (len(data.columns) - i)/len(data.columns)), fmt='o', capsize=5, capthick=2)
+    #variable init for labels
     labels = np.empty(0)
+    #sets the labels for each line for data
     for i in range(len(data.columns)-1):
         labels = np.append(labels, data.columns[i][0:4] + ' ' + data.columns[i][5:7] + ' ' + data.columns[i][8:10])
+
+    #adds legend, title, and axis labels
     plt.legend(labels, loc='upper right')
     plt.title(title)
     plt.xlabel('Wavelength (nm)')
@@ -306,9 +323,11 @@ if process_data:
     if len(os.listdir('processedData')) == 0:
         process_data()
     else:
+        #adds to log file that data processing is skipped
         with open('dataAnalysis.log', 'a') as f:
             f.write('skipping data processing as processed data already exists. \n')
 else:
+    #adds to log file that data processing is skipped as per user specified
     with open('dataAnalysis.log', 'a') as f:
         f.write('skipping data processing as user specified \n')
 
@@ -377,21 +396,35 @@ create_plot(mean_eqe_C60_00, mean_eqe_C60_00_SD, 10, 10, 'EQE of the C60 0 cycle
 create_plot(mean_eqe_C60_05, mean_eqe_C60_05_SD, 10, 10, 'EQE of the C60 5 cycle set', 'outputData/C60_05_cycle_day_average.png')
 create_plot(mean_eqe_C60_10, mean_eqe_C60_10_SD, 10, 10, 'EQE of the C60 10 cycle set', 'outputData/C60_10_cycle_day_average.png')
 
+#inits mean of mean variables
 mean_mean_eqe_00 = pd.DataFrame()
 mean_mean_eqe_05 = pd.DataFrame()
 mean_mean_eqe_10 = pd.DataFrame()
-
+#sets mean of mean variables
 mean_mean_eqe_00 = np.array(mean_eqe_C60_00.mean(axis=0))
 mean_mean_eqe_05 = np.array(mean_eqe_C60_05.mean(axis=0))
 mean_mean_eqe_10 = np.array(mean_eqe_C60_10.mean(axis=0))
 
 mean_mean_eqe_05 = np.insert(mean_mean_eqe_05, 7, 0)
 
+plot_hours = np.array([0, 168, 336, 504, 528, 840, 1008, 1176])
 
+#manually edits arrays to account for the difference in starting times for the stressing on tuesdays and thursdays
+plot_data_00 = np.empty(0)
+plot_data_00 = np.append(plot_data_00, [(mean_mean_eqe_00[0] + mean_mean_eqe_00[1])/2, mean_mean_eqe_00[2], (mean_mean_eqe_00[3] + mean_mean_eqe_00[4])/2, (mean_mean_eqe_00[5] + mean_mean_eqe_00[6])/2, mean_mean_eqe_00[7], (mean_mean_eqe_00[8] + mean_mean_eqe_00[9])/2, (mean_mean_eqe_00[10] + mean_mean_eqe_00[11])/2, (mean_mean_eqe_00[12] + mean_mean_eqe_00[13])/2])
+
+plot_data_05 = np.empty(0)
+plot_data_05 = np.append(plot_data_05, [(mean_mean_eqe_05[0] + mean_mean_eqe_05[1])/2, mean_mean_eqe_05[2], (mean_mean_eqe_05[3] + mean_mean_eqe_05[4])/2, (mean_mean_eqe_05[5] + mean_mean_eqe_05[6])/2, mean_mean_eqe_05[7], (mean_mean_eqe_05[8] + mean_mean_eqe_05[9])/2, (mean_mean_eqe_05[10] + mean_mean_eqe_05[11])/2, (mean_mean_eqe_05[12] + mean_mean_eqe_05[13])/2])
+
+plot_data_10 = np.empty(0)
+plot_data_10 = np.append(plot_data_10, [(mean_mean_eqe_10[0] + mean_mean_eqe_10[1])/2, mean_mean_eqe_10[2], (mean_mean_eqe_10[3] + mean_mean_eqe_10[4])/2, (mean_mean_eqe_10[5] + mean_mean_eqe_10[6])/2, mean_mean_eqe_10[7], (mean_mean_eqe_10[8] + mean_mean_eqe_10[9])/2, (mean_mean_eqe_10[10] + mean_mean_eqe_10[11])/2, (mean_mean_eqe_10[12] + mean_mean_eqe_10[13])/2])
+
+#creates a final figure with all the data from mean of mean data
 plt.figure(figsize=[10,10])
-plt.plot(other_hours, mean_mean_eqe_00[:-1])
-plt.plot(other_hours, mean_mean_eqe_05[:-1])
-plt.plot(other_hours, mean_mean_eqe_10[:-1])
+plt.plot(plot_hours, plot_data_00)
+plt.plot(plot_hours, plot_data_05)
+plt.plot(plot_hours, plot_data_10)
+plt.plot(plot_hours[4], plot_data_05[4], 'bo')
 plt.legend(['C60 0 cycle', 'C60 5 cycle', 'C60 10 cycle'])
 plt.title('Comparison of C60 cycle sets')
 plt.xlabel('Time (hr)')
