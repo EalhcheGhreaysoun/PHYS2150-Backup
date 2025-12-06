@@ -430,8 +430,8 @@ final_C60_05['hours'] = plot_hours
 final_C60_10['hours'] = plot_hours
 
 final_C60_00['EQE'] = plot_data_00
-final_C60_00['EQE'] = plot_data_05
-final_C60_00['EQE'] = plot_data_10
+final_C60_05['EQE'] = plot_data_05
+final_C60_10['EQE'] = plot_data_10
 
 final_C60_00.to_csv('outputData/C60_00_mean_for_graph.csv', index=False)
 final_C60_05.to_csv('outputData/C60_05_mean_for_graph.csv', index=False)
