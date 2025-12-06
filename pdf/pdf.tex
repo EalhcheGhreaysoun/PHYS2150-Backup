@@ -1,3 +1,36 @@
+\documentclass[11pt]{article}
+
+\usepackage{sectsty}
+\usepackage{graphicx}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\setlength{\parindent}{0pt}
+
+\title{Code and summary}
+\author{Jensen Lee, Gabe Valletto, Liam Ziegenhorn}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\section{Code for Data Processing}
+
+Below is the code used for processing the coalated data in the given H5 file. Roughly, the code pulls data for each date and cell and writes the data to files. It generates one file for each date, cell, and pixel if data is avaliable. EQE data is then calculated from each of the 8 pixels to create a file for the EQE data for each cell and date. From there, EQE data for each cell is grouped into three groups by C60 usage. For each C60 usage group is then averaged for each date, and a figure is generated for each C60 usage group. These figures are displayed after the code. At this point, three axis exist for the data: wavelength, time, and EQE. The data is then averaged on the wavelength axis to create a plot of average EQE as a function of time. This plot is also displayed after the code.
+
+\
+
+Here starts the code:
+
+\begin{verbatim}
 '''
 the following code requires the modules listed:
 numpy as p
@@ -13,11 +46,15 @@ parent:
 ---> data_fa25.h5
 
 
-The log files lists operations that the code performs, including data omission, reading files out of the H5 file, and more, Do note that it overwrites each time the code runs and previous logs are deleted.
+The log files lists operations that the code performs, including data omission, reading 
+files out of the H5 file, and more, Do note that it overwrites each time the code runs 
+and previous logs are deleted.
 
 WARNINGS:
-* do note that the code generates about 2400 files in the rawData folder, about 280 files in the processedData folder, 4 images and a log file.
-  the large amount of files might overload some cloud based system, however, this has not been tested
+* do note that the code generates about 2400 files in the rawData folder, about 280 files 
+in the processedData folder, 4 images and a log file.
+the large amount of files might overload some cloud based system, however, this has 
+not been tested
 
 
 enjoy!
@@ -39,15 +76,20 @@ active_area_m2 = active_area_cm2 * 1e-4  # Convert cm^2 to m^2
 
 ### need to make sure some dates start on 09_11
 # array of dates for looping and file detection
-dates = np.array(['2025_09_09', '2025_09_11', '2025_09_16', '2025_09_23', '2025_09_25', '2025_09_30', '2025_10_02', '2025_10_03', '2025_10_14', '2025_10_16', '2025_10_21', '2025_10_23', '2025_10_28', '2025_10_30'])
+dates = np.array(['2025_09_09', '2025_09_11', '2025_09_16', '2025_09_23', '2025_09_25', 
+    '2025_09_30', '2025_10_02', '2025_10_03', '2025_10_14', '2025_10_16', '2025_10_21', 
+    '2025_10_23', '2025_10_28', '2025_10_30'])
 
 hours = np.array([0,48,168,336,384,504,552,576,840,888,1008,1056,1176,1224])
 other_hours = np.array([0, 0, 168, 336, 336, 504, 504, 528, 840, 840, 1008, 1008, 1176, 1176])
  
 # cell # in each set of C60 cycles
-C60_00Cycle = np.array(['129', '131', '132', '134', '135', '136', '141', '145', '146', '161', '162', '170', '184', '190', '194'])
-C60_05Cycle = np.array(['139', '143', '144', '157', '166', '172', '174', '176', '187', '189', '191', '193', '196'])
-C60_10Cycle = np.array(['126', '127', '130', '133', '137', '138', '147', '158', '159', '163', '164', '169', '179', '180', '182', '183', '186', '195'])
+C60_00Cycle = np.array(['129', '131', '132', '134', '135', '136', '141', '145', '146', 
+    '161', '162', '170', '184', '190', '194'])
+C60_05Cycle = np.array(['139', '143', '144', '157', '166', '172', '174', '176', '187', 
+    '189', '191', '193', '196'])
+C60_10Cycle = np.array(['126', '127', '130', '133', '137', '138', '147', '158', '159', 
+    '163', '164', '169', '179', '180', '182', '183', '186', '195'])
 all_cells = np.concatenate((C60_00Cycle, C60_05Cycle, C60_10Cycle))
 all_cells.sort()
 
@@ -182,7 +224,8 @@ def get_current_data(hdf5_path, cell_number, pixel_number, date):
             return df
         else:
             with open('dataAnalysis.log', 'a') as f:
-                f.write(f'Current data for Cell{cell_number}, Pixel{pixel_number} on {date} not found.\n')
+                f.write(f'Current data for Cell{cell_number}, Pixel{pixel_number} on {date} 
+                    not found.\n')
             return None
 
 #function for writing data from h5 file to csvs
@@ -230,7 +273,8 @@ def process_data():
     for i, date in enumerate(dates):
         for j, cell in enumerate(all_cells):
             for file_name in os.listdir('rawData'):
-                #if the file in question has the same date and cell# as the desired, adds to list of file names
+                #if the file in question has the same date and cell# as the desired, adds 
+                    to list of file names
                 if file_name == f'{date}_power_cell{cell}.csv':
                     TEMP_power_file = file_name
                 if file_name[0:26] == f'{date}_current_cell{cell}':
@@ -239,30 +283,41 @@ def process_data():
                 # reads power data from file
                 power_df = pd.read_csv(f'rawData/{TEMP_power_file}')
 
-                # reads wavelength data from second file in array, it does not matter which file we read from, but the first entry in the array contains information about the array type
-                current_df['Wavelength (nm)'] = pd.read_csv(f'rawData/{date}_current_cell{TEMP_current_files[1][23:26]}_pixel{1}.csv')['Wavelength (nm)']
+                # reads wavelength data from second file in array, it does not matter which 
+                    file we read from, but the first entry in the array contains information 
+                    about the array type
+                current_df['Wavelength (nm)'] = pd.read_csv(f'rawData/{date}_current_cell
+                    {TEMP_current_files[1][23:26]}_pixel{1}.csv')['Wavelength (nm)']
 
                 # loops over all files and adds current data to the dataframe
                 i = 0
                 while i < 8:
-                    current_df[f'Pixel {i+1} Current (A)'] = pd.read_csv(f'rawData/{date}_current_cell{TEMP_current_files[1][23:26]}_pixel{i+1}.csv')['Current (A)']
+                    current_df[f'Pixel {i+1} Current (A)'] = pd.read_csv(f'rawData/{date}
+                        _current_cell{TEMP_current_files[1][23:26]}_pixel{i+1}.csv')
+                        ['Current (A)']
                     i += 1
 
                 #inits eqe df's first column
                 eqe['Wavelength (nm)'] = current_df['Wavelength (nm)']
 
-                # loops over all the columns in the current df and does math to convert it to eqe
+                # loops over all the columns in the current df and does math to convert 
+                    it to eqe
                 i = 0
                 while i < 8:
-                    eqe[f'EQE pixel {i+1}'] = ((current_df[f'Pixel {i+1} Current (A)'] / power_df['Power (W)']) * (h * c / (e * current_df['Wavelength (nm)']*1e-9)))
+                    eqe[f'EQE pixel {i+1}'] = ((current_df[f'Pixel {i+1} Current (A)'] / 
+                    power_df['Power (W)']) * (h * c / (e * current_df['Wavelength (nm)']*1e-9)))
                     i += 1
                 eqe = slice_data(eqe, wavelength_lower_bound, wavelength_upper_bound)
-                # writes final EQE data for each date for each cell to a file in folder processed data
-                eqe.to_csv(f'processedData/eqe_results_{date}_cell{TEMP_current_files[1][23:26]}.csv', index=False)
+                # writes final EQE data for each date for each cell to a file in folder 
+                    processed data
+                eqe.to_csv(f'processedData/eqe_results_{date}_cell{TEMP_current_files
+                    [1][23:26]}.csv', index=False)
             else:
                 #writes to log file that data processing was skipped
                 with open('dataAnalysis.log', 'a') as f:
-                    f.write(f'insufficient number of files for {date} and cell {cell}. Found files are as follows: {TEMP_power_file} \n {TEMP_current_files}\n')
+                    f.write(f'insufficient number of files for {date} and cell {cell}. 
+                        Found files are as follows: {TEMP_power_file} \n 
+                        {TEMP_current_files}\n')
             # clears temp variables for reuse
             TEMP_current_files = np.empty(0)
             TEMP_power_file = ''
@@ -273,15 +328,19 @@ def create_plot(data, sdev, size_x, size_y, title, save_file_name, plot_errors=T
     plt.figure(figsize=(size_x, size_y))
     #loops through data in the given dataframe
     for i in range(len(data.columns) - 1):
-        plt.plot(data['Wavelength (nm)'], data[data.columns[i]], color=((i/len(data.columns)), 0, (len(data.columns) - i)/len(data.columns)))
+        plt.plot(data['Wavelength (nm)'], data[data.columns[i]], color=((i/len(data.columns)), 
+            0, (len(data.columns) - i)/len(data.columns)))
         #adds error bars in wanted
         if plot_errors:
-            plt.errorbar(data['Wavelength (nm)'], data[data.columns[i]], yerr=sdev[data.columns[i]],color=((i/len(data.columns)), 0, (len(data.columns) - i)/len(data.columns)), fmt='o', capsize=5, capthick=2)
+            plt.errorbar(data['Wavelength (nm)'], data[data.columns[i]], 
+                yerr=sdev[data.columns[i]],color=((i/len(data.columns)), 0, 
+                (len(data.columns) - i)/len(data.columns)), fmt='o', capsize=5, capthick=2)
     #variable init for labels
     labels = np.empty(0)
     #sets the labels for each line for data
     for i in range(len(data.columns)-1):
-        labels = np.append(labels, data.columns[i][0:4] + ' ' + data.columns[i][5:7] + ' ' + data.columns[i][8:10])
+        labels = np.append(labels, data.columns[i][0:4] + ' ' 
+            + data.columns[i][5:7] + ' ' + data.columns[i][8:10])
 
     #adds legend, title, and axis labels
     plt.legend(labels, loc='upper right')
@@ -319,7 +378,8 @@ if process_data:
         os.mkdir('processedData') #if not, make directory
         #add to log file that directory was created
         with open('dataAnalysis.log', 'a') as f:
-            f.write(f'directory processedData did not exist. created directory processedData\n')
+            f.write(f'directory processedData did not exist. created directory 
+                processedData\n')
     if len(os.listdir('processedData')) == 0:
         process_data()
     else:
@@ -336,15 +396,18 @@ print('done processing data. \n')
 #inits data frames for averaging mean values
 mean_eqe_C60_00 = pd.DataFrame()
 mean_eqe_C60_00_SD = pd.DataFrame()
-mean_eqe_C60_00['Wavelength (nm)'] = pd.read_csv(f'processedData/{os.listdir('processedData')[0]}')['Wavelength (nm)']
+mean_eqe_C60_00['Wavelength (nm)'] = pd.read_csv(f'processedData/{os.listdir
+    ('processedData')[0]}')['Wavelength (nm)']
 
 mean_eqe_C60_05 = pd.DataFrame()
 mean_eqe_C60_05_SD = pd.DataFrame()
-mean_eqe_C60_05['Wavelength (nm)'] = pd.read_csv(f'processedData/{os.listdir('processedData')[0]}')['Wavelength (nm)']
+mean_eqe_C60_05['Wavelength (nm)'] = pd.read_csv(f'processedData/{os.listdir
+    ('processedData')[0]}')['Wavelength (nm)']
 
 mean_eqe_C60_10 = pd.DataFrame()
 mean_eqe_C60_10_SD = pd.DataFrame()
-mean_eqe_C60_10['Wavelength (nm)'] = pd.read_csv(f'processedData/{os.listdir('processedData')[0]}')['Wavelength (nm)']
+mean_eqe_C60_10['Wavelength (nm)'] = pd.read_csv(f'processedData/{os.listdir
+    ('processedData')[0]}')['Wavelength (nm)']
 
 #checks if the output directory exists, if not, creates directory and adds to log file
 if not os.path.isdir('outputData'):
@@ -392,9 +455,12 @@ mean_eqe_C60_00_SD.to_csv('outputData/C60_05_SD.csv', index=False)
 mean_eqe_C60_00_SD.to_csv('outputData/C60_10_SD.csv', index=False)
 
 #plots data
-create_plot(mean_eqe_C60_00, mean_eqe_C60_00_SD, 10, 10, 'EQE of the C60 0 cycle set', 'outputData/C60_00_cycle_day_average.png')
-create_plot(mean_eqe_C60_05, mean_eqe_C60_05_SD, 10, 10, 'EQE of the C60 5 cycle set', 'outputData/C60_05_cycle_day_average.png')
-create_plot(mean_eqe_C60_10, mean_eqe_C60_10_SD, 10, 10, 'EQE of the C60 10 cycle set', 'outputData/C60_10_cycle_day_average.png')
+create_plot(mean_eqe_C60_00, mean_eqe_C60_00_SD, 10, 10, 'EQE of the C60 0 cycle set', 
+    'outputData/C60_00_cycle_day_average.png')
+create_plot(mean_eqe_C60_05, mean_eqe_C60_05_SD, 10, 10, 'EQE of the C60 5 cycle set', 
+    'outputData/C60_05_cycle_day_average.png')
+create_plot(mean_eqe_C60_10, mean_eqe_C60_10_SD, 10, 10, 'EQE of the C60 10 cycle set', 
+    'outputData/C60_10_cycle_day_average.png')
 
 #inits mean of mean variables
 mean_mean_eqe_00 = pd.DataFrame()
@@ -409,34 +475,28 @@ mean_mean_eqe_05 = np.insert(mean_mean_eqe_05, 7, 0)
 
 plot_hours = np.array([0, 168, 336, 504, 528, 840, 1008, 1176])
 
-#manually edits arrays to account for the difference in starting times for the stressing on tuesdays and thursdays
+#manually edits arrays to account for the difference in starting times for the 
+stressing on tuesdays and thursdays
 plot_data_00 = np.empty(0)
-plot_data_00 = np.append(plot_data_00, [(mean_mean_eqe_00[0] + mean_mean_eqe_00[1])/2, mean_mean_eqe_00[2], (mean_mean_eqe_00[3] + mean_mean_eqe_00[4])/2, (mean_mean_eqe_00[5] + mean_mean_eqe_00[6])/2, mean_mean_eqe_00[7], (mean_mean_eqe_00[8] + mean_mean_eqe_00[9])/2, (mean_mean_eqe_00[10] + mean_mean_eqe_00[11])/2, (mean_mean_eqe_00[12] + mean_mean_eqe_00[13])/2])
+plot_data_00 = np.append(plot_data_00, [(mean_mean_eqe_00[0] + mean_mean_eqe_00[1])/2, 
+    mean_mean_eqe_00[2], (mean_mean_eqe_00[3] + mean_mean_eqe_00[4])/2, 
+    (mean_mean_eqe_00[5] + mean_mean_eqe_00[6])/2, mean_mean_eqe_00[7], 
+    (mean_mean_eqe_00[8] + mean_mean_eqe_00[9])/2, (mean_mean_eqe_00[10] + 
+    mean_mean_eqe_00[11])/2, (mean_mean_eqe_00[12] + mean_mean_eqe_00[13])/2])
 
 plot_data_05 = np.empty(0)
-plot_data_05 = np.append(plot_data_05, [(mean_mean_eqe_05[0] + mean_mean_eqe_05[1])/2, mean_mean_eqe_05[2], (mean_mean_eqe_05[3] + mean_mean_eqe_05[4])/2, (mean_mean_eqe_05[5] + mean_mean_eqe_05[6])/2, mean_mean_eqe_05[7], (mean_mean_eqe_05[8] + mean_mean_eqe_05[9])/2, (mean_mean_eqe_05[10] + mean_mean_eqe_05[11])/2, (mean_mean_eqe_05[12] + mean_mean_eqe_05[13])/2])
+plot_data_05 = np.append(plot_data_05, [(mean_mean_eqe_05[0] + mean_mean_eqe_05[1])/2, 
+    mean_mean_eqe_05[2], (mean_mean_eqe_05[3] + mean_mean_eqe_05[4])/2, 
+    (mean_mean_eqe_05[5] + mean_mean_eqe_05[6])/2, mean_mean_eqe_05[7], 
+    (mean_mean_eqe_05[8] + mean_mean_eqe_05[9])/2, (mean_mean_eqe_05[10] + 
+    mean_mean_eqe_05[11])/2, (mean_mean_eqe_05[12] + mean_mean_eqe_05[13])/2])
 
 plot_data_10 = np.empty(0)
-plot_data_10 = np.append(plot_data_10, [(mean_mean_eqe_10[0] + mean_mean_eqe_10[1])/2, mean_mean_eqe_10[2], (mean_mean_eqe_10[3] + mean_mean_eqe_10[4])/2, (mean_mean_eqe_10[5] + mean_mean_eqe_10[6])/2, mean_mean_eqe_10[7], (mean_mean_eqe_10[8] + mean_mean_eqe_10[9])/2, (mean_mean_eqe_10[10] + mean_mean_eqe_10[11])/2, (mean_mean_eqe_10[12] + mean_mean_eqe_10[13])/2])
-
-
-#create dataframes for exporting final data
-final_C60_00 = pd.DataFrame()
-final_C60_05 = pd.DataFrame()
-final_C60_10 = pd.DataFrame()
-
-final_C60_00['hours'] = plot_hours
-final_C60_05['hours'] = plot_hours
-final_C60_10['hours'] = plot_hours
-
-final_C60_00['EQE'] = plot_data_00
-final_C60_00['EQE'] = plot_data_05
-final_C60_00['EQE'] = plot_data_10
-
-final_C60_00.to_csv('outputData/C60_00_mean_for_graph.csv', index=False)
-final_C60_05.to_csv('outputData/C60_05_mean_for_graph.csv', index=False)
-final_C60_10.to_csv('outputData/C60_10_mean_for_graph.csv', index=False)
-
+plot_data_10 = np.append(plot_data_10, [(mean_mean_eqe_10[0] + mean_mean_eqe_10[1])/2, 
+    mean_mean_eqe_10[2], (mean_mean_eqe_10[3] + mean_mean_eqe_10[4])/2, 
+    (mean_mean_eqe_10[5] + mean_mean_eqe_10[6])/2, mean_mean_eqe_10[7], 
+    (mean_mean_eqe_10[8] + mean_mean_eqe_10[9])/2, (mean_mean_eqe_10[10] + 
+    mean_mean_eqe_10[11])/2, (mean_mean_eqe_10[12] + mean_mean_eqe_10[13])/2])
 
 #creates a final figure with all the data from mean of mean data
 plt.figure(figsize=[10,10])
@@ -452,3 +512,27 @@ plt.savefig('outputData/C60_cycles.png')
 
 #signals to user that processing has ended
 print('complete.')
+\end{verbatim}
+
+Here ends the code.
+
+\
+
+Below are the figures generated by the code above. In order from first to last, the figures are of the C60 zero cycle usage group, C60 five cycle usage group, C60 ten cycle usage group, and the wavelength averaged EQE data for all three groups.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{../outputData/C60_00_cycle_day_average.png}
+    \caption{EQE of the C60 zero cycle group}
+\end{figure}
+
+The above graph shows the EQE data for C60 zero cycle as a function of wavelength. Time variation is shown through color difference with blue being earlier in time and red being later in time. While the color difference is not a exemplary method of displaying time variation, it is sufficent in this case.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{../outputData/C60_05_cycle_day_average.png}
+    \caption{EQE of the C60 zero cycle group}
+\end{figure}
+
+The above graph shows the EQE data for C60 five cycle
+\end{document}

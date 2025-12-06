@@ -1,0 +1,407 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.10.22)  4 DEC 2025 18:13
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**"/run/media/jensen/D Main/Documents/School/Sophmore/2025_Fall/PHYS2150/ProjectFiles/pdf/pdf.tex"
+(/run/media/jensen/D Main/Documents/School/Sophmore/2025_Fall/PHYS2150/ProjectFiles/pdf/pdf.tex
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+(/usr/share/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2024/06/29 v1.4n Standard LaTeX document class
+(/usr/share/texmf-dist/tex/latex/base/size11.clo
+File: size11.clo 2024/06/29 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count196
+\c@section=\count197
+\c@subsection=\count198
+\c@subsubsection=\count199
+\c@paragraph=\count266
+\c@subparagraph=\count267
+\c@figure=\count268
+\c@table=\count269
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen141
+) (/usr/share/texmf-dist/tex/latex/sectsty/sectsty.sty
+Package: sectsty 2002/02/25 v2.0.2 Commands to change all sectional heading styles
+
+
+LaTeX Warning: Command \underbar  has changed.
+               Check if current package is valid.
+
+
+LaTeX Warning: Command \underline  has changed.
+               Check if current package is valid.
+
+) (/usr/share/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+ (/usr/share/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
+) (/usr/share/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+ (/usr/share/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+) (/usr/share/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+ (/usr/share/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen142
+\Gin@req@width=\dimen143
+) (/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count270
+\l__pdf_internal_box=\box52
+) (./pdf.aux)
+\openout1 = `pdf.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+ (/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count271
+\scratchdimen=\dimen144
+\scratchbox=\box53
+\nofMPsegments=\count272
+\nofMParguments=\count273
+\everyMPshowfont=\toks18
+\MPscratchCnt=\count274
+\MPscratchDim=\dimen145
+\MPnumerator=\count275
+\makeMPintoPDFobject=\count276
+\everyMPtoPDFconversion=\toks19
+) (/usr/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
+ (/usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
+))
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 21.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 21.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 21.
+
+
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 The log files lists operations that the code performs, including data omission, reading[] 
+ []
+
+
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 files out of the H5 file, and more, Do note that it overwrites each time the code runs[] 
+ []
+
+
+Overfull \hbox (41.87822pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 * do note that the code generates about 2400 files in the rawData folder, about 280 files[] 
+ []
+
+
+Overfull \hbox (7.3861pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 the large amount of files might overload some cloud based system, however, this has[] 
+ []
+
+
+
+[2]
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 dates = np.array(['2025_09_09', '2025_09_11', '2025_09_16', '2025_09_23', '2025_09_25',[] 
+ []
+
+
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]    \OT1/cmtt/m/n/10.95 '2025_09_30', '2025_10_02', '2025_10_03', '2025_10_14', '2025_10_16', '2025_10_21',[] 
+ []
+
+
+Overfull \hbox (70.62166pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 other_hours = np.array([0, 0, 168, 336, 336, 504, 504, 528, 840, 840, 1008, 1008, 1176, 1176])[] 
+ []
+
+
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 C60_00Cycle = np.array(['129', '131', '132', '134', '135', '136', '141', '145', '146',[] 
+ []
+
+
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 C60_05Cycle = np.array(['139', '143', '144', '157', '166', '172', '174', '176', '187',[] 
+ []
+
+
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 C60_10Cycle = np.array(['126', '127', '130', '133', '137', '138', '147', '158', '159',[] 
+ []
+
+
+
+[3]
+
+[4]
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]                    \OT1/cmtt/m/n/10.95 f.write(f'Power data for Cell{cell_number} on {date} not found.\n')[] 
+ []
+
+
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]    \OT1/cmtt/m/n/10.95 Retrieve Current data (wavelength vs current) for a specific cell, pixel, and date.[] 
+ []
+
+
+
+[5]
+Overfull \hbox (53.3756pt too wide) in paragraph at lines 515--515
+[]                \OT1/cmtt/m/n/10.95 f.write(f'Current data for Cell{cell_number}, Pixel{pixel_number} on {date}[] 
+ []
+
+
+Overfull \hbox (13.13478pt too wide) in paragraph at lines 515--515
+[]                    \OT1/cmtt/m/n/10.95 var_name = f'rawData/{date}_current_cell{cell}_pixel{pixel}.csv'[] 
+ []
+
+
+
+[6]
+Overfull \hbox (41.87822pt too wide) in paragraph at lines 515--515
+[]                \OT1/cmtt/m/n/10.95 #if the file in question has the same date and cell# as the desired, adds[] 
+ []
+
+
+Overfull \hbox (53.3756pt too wide) in paragraph at lines 515--515
+[]                \OT1/cmtt/m/n/10.95 # reads wavelength data from second file in array, it does not matter which[] 
+ []
+
+
+Overfull \hbox (59.12428pt too wide) in paragraph at lines 515--515
+[]                    \OT1/cmtt/m/n/10.95 file we read from, but the first entry in the array contains information[] 
+ []
+
+
+Overfull \hbox (41.87822pt too wide) in paragraph at lines 515--515
+[]                \OT1/cmtt/m/n/10.95 current_df['Wavelength (nm)'] = pd.read_csv(f'rawData/{date}_current_cell[] 
+ []
+
+
+Overfull \hbox (13.13478pt too wide) in paragraph at lines 515--515
+[]                    \OT1/cmtt/m/n/10.95 {TEMP_current_files[1][23:26]}_pixel{1}.csv')['Wavelength (nm)'][] 
+ []
+
+
+Overfull \hbox (41.87822pt too wide) in paragraph at lines 515--515
+[]                    \OT1/cmtt/m/n/10.95 current_df[f'Pixel {i+1} Current (A)'] = pd.read_csv(f'rawData/{date}[] 
+ []
+
+
+Overfull \hbox (13.13478pt too wide) in paragraph at lines 515--515
+[]                        \OT1/cmtt/m/n/10.95 _current_cell{TEMP_current_files[1][23:26]}_pixel{i+1}.csv')[] 
+ []
+
+
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]                \OT1/cmtt/m/n/10.95 # loops over all the columns in the current df and does math to convert[] 
+ []
+
+
+Overfull \hbox (36.12953pt too wide) in paragraph at lines 515--515
+[]                    \OT1/cmtt/m/n/10.95 eqe[f'EQE pixel {i+1}'] = ((current_df[f'Pixel {i+1} Current (A)'] /[] 
+ []
+
+
+Overfull \hbox (82.11903pt too wide) in paragraph at lines 515--515
+[]                    \OT1/cmtt/m/n/10.95 power_df['Power (W)']) * (h * c / (e * current_df['Wavelength (nm)']*1e-9)))[] 
+ []
+
+
+
+[7]
+Overfull \hbox (18.88347pt too wide) in paragraph at lines 515--515
+[]                \OT1/cmtt/m/n/10.95 eqe = slice_data(eqe, wavelength_lower_bound, wavelength_upper_bound)[] 
+ []
+
+
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]                \OT1/cmtt/m/n/10.95 # writes final EQE data for each date for each cell to a file in folder[] 
+ []
+
+
+Overfull \hbox (18.88347pt too wide) in paragraph at lines 515--515
+[]                \OT1/cmtt/m/n/10.95 eqe.to_csv(f'processedData/eqe_results_{date}_cell{TEMP_current_files[] 
+ []
+
+
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]                    \OT1/cmtt/m/n/10.95 f.write(f'insufficient number of files for {date} and cell {cell}.[] 
+ []
+
+
+Overfull \hbox (18.88347pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 def create_plot(data, sdev, size_x, size_y, title, save_file_name, plot_errors=True):[] 
+ []
+
+
+Overfull \hbox (70.62166pt too wide) in paragraph at lines 515--515
+[]        \OT1/cmtt/m/n/10.95 plt.plot(data['Wavelength (nm)'], data[data.columns[i]], color=((i/len(data.columns)),[] 
+ []
+
+
+Overfull \hbox (53.3756pt too wide) in paragraph at lines 515--515
+[]                \OT1/cmtt/m/n/10.95 (len(data.columns) - i)/len(data.columns)), fmt='o', capsize=5, capthick=2)[] 
+ []
+
+
+
+[8]
+Overfull \hbox (7.3861pt too wide) in paragraph at lines 515--515
+[]    \OT1/cmtt/m/n/10.95 if not os.path.isdir('rawData'): #checks to see if the desired directory exists[] 
+ []
+
+
+Overfull \hbox (13.13478pt too wide) in paragraph at lines 515--515
+[]            \OT1/cmtt/m/n/10.95 f.write(f'directory rawData did not exist. created directory rawData\n')[] 
+ []
+
+
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]    \OT1/cmtt/m/n/10.95 if len(os.listdir('rawData')) == 0: #checks if data has been pulled before, if not:[] 
+ []
+
+
+Overfull \hbox (13.13478pt too wide) in paragraph at lines 515--515
+[]            \OT1/cmtt/m/n/10.95 f.write('skipping data processing as processed data already exists. \n')[] 
+ []
+
+
+
+[9]
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 #checks if the output directory exists, if not, creates directory and adds to log file[] 
+ []
+
+
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]        \OT1/cmtt/m/n/10.95 f.write('Directory outputData does not exist, created directory outputData \n')[] 
+ []
+
+
+Overfull \hbox (1.6374pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 mean_eqe_C60_00 = mean_eqe_C60_00.reindex(sorted(mean_eqe_C60_00.columns), axis=1)[] 
+ []
+
+
+Overfull \hbox (1.6374pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 mean_eqe_C60_05 = mean_eqe_C60_05.reindex(sorted(mean_eqe_C60_05.columns), axis=1)[] 
+ []
+
+
+Overfull \hbox (1.6374pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 mean_eqe_C60_10 = mean_eqe_C60_10.reindex(sorted(mean_eqe_C60_10.columns), axis=1)[] 
+ []
+
+
+Overfull \hbox (53.3756pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 mean_eqe_C60_00_SD = mean_eqe_C60_00_SD.reindex(sorted(mean_eqe_C60_00_SD.columns), axis=1)[] 
+ []
+
+
+Overfull \hbox (53.3756pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 mean_eqe_C60_05_SD = mean_eqe_C60_05_SD.reindex(sorted(mean_eqe_C60_05_SD.columns), axis=1)[] 
+ []
+
+
+Overfull \hbox (53.3756pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 mean_eqe_C60_10_SD = mean_eqe_C60_10_SD.reindex(sorted(mean_eqe_C60_10_SD.columns), axis=1)[] 
+ []
+
+
+
+[10]
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 create_plot(mean_eqe_C60_00, mean_eqe_C60_00_SD, 10, 10, 'EQE of the C60 0 cycle set',[] 
+ []
+
+
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 create_plot(mean_eqe_C60_05, mean_eqe_C60_05_SD, 10, 10, 'EQE of the C60 5 cycle set',[] 
+ []
+
+
+Overfull \hbox (30.38084pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 create_plot(mean_eqe_C60_10, mean_eqe_C60_10_SD, 10, 10, 'EQE of the C60 10 cycle set',[] 
+ []
+
+
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 plot_data_00 = np.append(plot_data_00, [(mean_mean_eqe_00[0] + mean_mean_eqe_00[1])/2,[] 
+ []
+
+
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 plot_data_05 = np.append(plot_data_05, [(mean_mean_eqe_05[0] + mean_mean_eqe_05[1])/2,[] 
+ []
+
+
+Overfull \hbox (24.63216pt too wide) in paragraph at lines 515--515
+[]\OT1/cmtt/m/n/10.95 plot_data_10 = np.append(plot_data_10, [(mean_mean_eqe_10[0] + mean_mean_eqe_10[1])/2,[] 
+ []
+
+
+
+[11]
+<../outputData/C60_00_cycle_day_average.png, id=42, 722.7pt x 722.7pt>
+File: ../outputData/C60_00_cycle_day_average.png Graphic file (type png)
+<use ../outputData/C60_00_cycle_day_average.png>
+Package pdftex.def Info: ../outputData/C60_00_cycle_day_average.png  used on input line 525.
+(pdftex.def)             Requested size: 328.82706pt x 328.82901pt.
+
+
+[12 <../outputData/C60_00_cycle_day_average.png>]
+<../outputData/C60_05_cycle_day_average.png, id=48, 722.7pt x 722.7pt>
+File: ../outputData/C60_05_cycle_day_average.png Graphic file (type png)
+<use ../outputData/C60_05_cycle_day_average.png>
+Package pdftex.def Info: ../outputData/C60_05_cycle_day_average.png  used on input line 533.
+(pdftex.def)             Requested size: 328.82706pt x 328.82901pt.
+
+
+[13 <../outputData/C60_05_cycle_day_average.png>] (./pdf.aux)
+ ***********
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+ ***********
+ ) 
+Here is how much of TeX's memory you used:
+ 1432 strings out of 475109
+ 23657 string characters out of 5765324
+ 434583 words of memory out of 5000000
+ 24469 multiletter control sequences out of 15000+600000
+ 562945 words of font info for 50 fonts, out of 8000000 for 9000
+ 40 hyphenation exceptions out of 8191
+ 57i,6n,65p,916b,271s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on pdf.pdf (13 pages, 263626 bytes).
+PDF statistics:
+ 77 PDF objects out of 1000 (max. 8388607)
+ 47 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+
