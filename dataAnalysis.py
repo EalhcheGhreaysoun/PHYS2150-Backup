@@ -2,25 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-'''
-takes three files with data generated from the dataProcessing.py file and creates a csv file with coefficients for the lines of best fit and a plot of the lines of best fit with a scatter plot of the data.
-'''
+# Load data
 
-#set the below properly before running;
-C60_00_file_path = 'outputData/C60_00_mean_for_graph.csv'
-C60_05_file_path = 'outputData/C60_05_mean_for_graph.csv'
-C60_10_file_path = 'outputData/C60_10_mean_for_graph.csv'
-output_path = 'outputData/best_fit_coefficient.csv'
-APPROXIMATION_ORDER = 3
-C60_00_color = 'b'
-C60_05_color = 'r'
-C60_10_color = 'y'
+C60_00_df = pd.read_csv('outputData/C60_00_mean_for_graph.csv')
+C60_05_df = pd.read_csv('outputData/C60_05_mean_for_graph.csv')
+C60_10_df = pd.read_csv('outputData/C60_10_mean_for_graph.csv')
 
-
-
-C60_00_df = pd.read_csv(C60_00_file_path)
-C60_05_df = pd.read_csv(C60_05_file_path)
-C60_10_df = pd.read_csv(C60_10_file_path)
+# Extract columns
 
 C60_00_time = C60_00_df['hours']
 C60_00_eqe  = C60_00_df['EQE']
@@ -31,25 +19,56 @@ C60_05_eqe  = C60_05_df['EQE']
 C60_10_time = C60_10_df['hours']
 C60_10_eqe  = C60_10_df['EQE']
 
-C60_eqe = np.array([C60_00_eqe, C60_05_eqe, C60_10_eqe])
+# Colors for each dataset
 
-coeff = np.array([np.polyfit(C60_00_time, eqe, APPROXIMATION_ORDER) for eqe in C60_eqe])
+colors = {
+    "00": "blue",
+    "05": "red",
+    "10": "gold"
+}
 
-p_00 = np.poly1d(coeff[0])
-p_05 = np.poly1d(coeff[1])
-p_10 = np.poly1d(coeff[2])
+# Fit polynomial curves
 
-xp = np.linspace(min(C60_00_time), max(C60_00_time), 100)
+mask = np.ones(len(C60_05_time), dtype=bool)
+mask[4] = False
 
-plt.scatter(C60_00_time, C60_00_eqe, color=C60_00_color)
-plt.scatter(C60_05_time, C60_05_eqe, color=C60_05_color)
-plt.scatter(C60_10_time, C60_10_eqe, color=C60_10_color)
+APPROX_ORDER = 3
+p_00 = np.poly1d(np.polyfit(C60_00_time, C60_00_eqe, APPROX_ORDER))
+p_05 = np.poly1d(np.polyfit(C60_05_time[mask], C60_05_eqe[mask], APPROX_ORDER))
+p_10 = np.poly1d(np.polyfit(C60_10_time, C60_10_eqe, APPROX_ORDER))
 
-plt.plot(xp, p_00(xp), color='b')
-plt.plot(xp, p_05(xp), color='r')
-plt.plot(xp, p_10(xp), color='y')
-plt.savefig('outputData/C60_cycles_best_fit.png')
+xp = np.linspace(min(C60_00_time), max(C60_00_time), 200)
 
-coeff_df = pd.DataFrame(coeff.T, columns=['00 coefficients', '05 coefficients', '10 coefficients'])
+# Create ONE plot with ALL elements + a usable legend
 
-coeff_df.to_csv(output_path)
+plt.figure(figsize=(10, 7))
+
+# Best-fit lines (legend labels apply here)
+plt.plot(xp, p_00(xp), color=colors["00"], linewidth=2, label="C60 (0 cycles)")
+plt.plot(xp, p_05(xp), color=colors["05"], linewidth=2, label="C60 (5 cycles)")
+plt.plot(xp, p_10(xp), color=colors["10"], linewidth=2, label="C60 (10 cycles)")
+
+# Scatter points (no labels → avoids duplicate legend entries)
+plt.scatter(C60_00_time, C60_00_eqe, color=colors["00"], s=40)
+plt.scatter(C60_05_time, C60_05_eqe, color=colors["05"], s=40)
+plt.scatter(C60_10_time, C60_10_eqe, color=colors["10"], s=40)
+
+# Titles and labels
+plt.title("C60 Device EQE Degradation – Best Fit Curves", fontsize=16)
+plt.xlabel("Time (hours)", fontsize=14)
+plt.ylabel("Mean EQE (%)", fontsize=14)
+plt.grid(True, linestyle=':', alpha=0.6)
+
+# Add the key (legend) ON the graph
+
+plt.legend(
+    title="Cycle Key",
+    title_fontsize=13,
+    fontsize=12,
+    loc='upper right'  # legend on graph
+)
+
+# Save the final plot
+plt.savefig('outputData/C60_cycles_best_fit.png', dpi=300)
+
+plt.show()
